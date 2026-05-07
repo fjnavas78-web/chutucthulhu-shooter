@@ -6,6 +6,7 @@ signal phase_changed(phase: int)
 
 @export var max_health: int = 1000
 @export var score_value: int = 5000
+@export var speed: float = 60.0
 
 var health: int = max_health
 var boss_phase: int = 1  # bosses have multiple phases (attack patterns)
