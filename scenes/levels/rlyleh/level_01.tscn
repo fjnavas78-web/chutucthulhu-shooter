@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/levels/level_01.gd" id="1_level"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/cultist.tscn" id="3_cultist"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/bosses/cthulhu.tscn" id="4_cthulhu"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud/hud.tscn" id="5_hud"]
+[ext_resource type="Script" path="res://scripts/systems/wave_spawner.gd" id="6_wave"]
+
+[node name="Level01" type="Node2D"]
+script = ExtResource("1_level")
+boss_scene = ExtResource("4_cthulhu")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 480.0
+offset_bottom = 854.0
+color = Color(0.03, 0.08, 0.12, 1.0)
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(240.0, 700.0)
+
+[node name="BossContainer" type="Node2D" parent="."]
+
+[node name="WaveSpawner" type="Node" parent="."]
+script = ExtResource("6_wave")
+enemy_scene = ExtResource("3_cultist")
+
+[node name="Spawn1" type="Marker2D" parent="WaveSpawner"]
+position = Vector2(80.0, 30.0)
+
+[node name="Spawn2" type="Marker2D" parent="WaveSpawner"]
+position = Vector2(240.0, 30.0)
+
+[node name="Spawn3" type="Marker2D" parent="WaveSpawner"]
+position = Vector2(400.0, 30.0)
+
+[node name="Spawn4" type="Marker2D" parent="WaveSpawner"]
+position = Vector2(20.0, 200.0)
+
+[node name="Spawn5" type="Marker2D" parent="WaveSpawner"]
+position = Vector2(460.0, 200.0)
+
+[node name="HUD" parent="." instance=ExtResource("5_hud")]

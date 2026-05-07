@@ -12,6 +12,7 @@ var player: Node2D = null
 
 func _ready() -> void:
 	health = max_health
+	add_to_group("enemies")
 	player = get_tree().get_first_node_in_group("player")
 
 func _physics_process(delta: float) -> void:

@@ -4,6 +4,10 @@
 
 config_version=5
 
+[autoload]
+
+GameManager="*res://scripts/systems/game_manager.gd"
+
 [application]
 
 config/name="ChutuCthulhu"

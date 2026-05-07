@@ -14,6 +14,7 @@ var is_top_down: bool = true  # false = side scroller
 
 func _ready() -> void:
 	health = max_health
+	add_to_group("player")
 
 func _physics_process(delta: float) -> void:
 	var direction := Vector2.ZERO
