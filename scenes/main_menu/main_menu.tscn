@@ -17,7 +17,7 @@ offset_left = 40.0
 offset_top = 140.0
 offset_right = 440.0
 offset_bottom = 220.0
-text = "Shoot Cthulhu"
+text = "SHOOT CTHULHU"
 horizontal_alignment = 1
 
 [node name="SubtitleLabel" type="Label" parent="."]

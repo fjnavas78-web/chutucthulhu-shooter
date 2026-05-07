@@ -5,13 +5,12 @@
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_hud")
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="LivesLabel" type="Label" parent="."]
 offset_left = 10.0
 offset_top = 10.0
-offset_right = 200.0
-offset_bottom = 34.0
-max_value = 100.0
-value = 100.0
+offset_right = 130.0
+offset_bottom = 38.0
+text = "♥♥♥"
 
 [node name="ScoreLabel" type="Label" parent="."]
 offset_left = 210.0

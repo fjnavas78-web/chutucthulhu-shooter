@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-@onready var health_bar: ProgressBar = $HealthBar
+@onready var lives_label: Label = $LivesLabel
 @onready var score_label: Label = $ScoreLabel
 @onready var wave_label: Label = $WaveLabel
 @onready var boss_bar: ProgressBar = $BossBar
@@ -11,10 +11,10 @@ func _ready() -> void:
 	boss_bar.hide()
 	boss_label.hide()
 	game_over_panel.hide()
+	update_lives(3)
 
-func update_health(current: int, max_val: int) -> void:
-	health_bar.max_value = max_val
-	health_bar.value = current
+func update_lives(lives: int) -> void:
+	lives_label.text = "♥".repeat(lives) if lives > 0 else "☠"
 
 func update_score(score: int) -> void:
 	score_label.text = "SCORE: %d" % score

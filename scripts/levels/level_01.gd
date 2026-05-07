@@ -10,12 +10,11 @@ extends Node2D
 func _ready() -> void:
 	wave_spawner.wave_started.connect(func(n): hud.show_wave(n, wave_spawner.waves))
 	wave_spawner.all_waves_completed.connect(_spawn_boss)
-	player.health_changed.connect(hud.update_health)
+	player.life_lost.connect(hud.update_lives)
 	player.died.connect(hud.show_game_over)
-	player.died.connect(GameManager.lose_life)
 	GameManager.score_changed.connect(hud.update_score)
 	GameManager.score = 0
-	hud.update_health(player.max_health, player.max_health)
+	hud.update_lives(player.MAX_LIVES)
 	hud.update_score(0)
 	wave_spawner.start()
 
