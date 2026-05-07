@@ -1,0 +1,26 @@
+# Godot 4 specific ignores
+.godot/
+*.uid
+
+# Exported projects
+export/
+
+# Android
+android/build/
+*.apk
+*.aab
+
+# iOS
+ios/build/
+*.ipa
+
+# macOS
+.DS_Store
+
+# Import caches (regenerated automatically)
+*.import
+
+# Mono/C# (if used)
+.mono/
+data_*/
+mono_crash.*.json
