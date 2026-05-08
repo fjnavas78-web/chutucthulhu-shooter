@@ -9,11 +9,12 @@ signal phase_changed(phase: int)
 @export var speed: float = 60.0
 
 var health: int = max_health
-var boss_phase: int = 1  # bosses have multiple phases (attack patterns)
+var boss_phase: int = 1
 var player: Node2D = null
 
 func _ready() -> void:
 	health = max_health
+	add_to_group("enemies")
 	player = get_tree().get_first_node_in_group("player")
 	_start_phase(1)
 
@@ -29,7 +30,7 @@ func take_damage(amount: int) -> void:
 		_on_death()
 
 func _check_phase_transition() -> void:
-	var pct = float(health) / float(max_health)
+	var pct := float(health) / float(max_health)
 	if boss_phase == 1 and pct <= 0.5:
 		_start_phase(2)
 	elif boss_phase == 2 and pct <= 0.2:

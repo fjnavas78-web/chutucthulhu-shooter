@@ -5,11 +5,12 @@ extends "res://scripts/enemies/base_boss.gd"
 var shoot_timer: Timer
 var move_timer: Timer
 var target_position: Vector2
+var _contact_cooldown: float = 0.0
 
 func _ready() -> void:
 	max_health = 1000
 	health = max_health
-	speed = 60.0
+	speed = 55.0
 	super()
 	target_position = global_position
 
@@ -21,22 +22,28 @@ func _ready() -> void:
 	move_timer.timeout.connect(_pick_new_target)
 	add_child(move_timer)
 
-	shoot_timer.start(2.0)
+	shoot_timer.start(2.5)
 	move_timer.start(3.0)
 
 func _physics_process(delta: float) -> void:
+	_contact_cooldown -= delta
 	var dir := target_position - global_position
-	if dir.length() > 10.0:
-		velocity = dir.normalized() * speed
-	else:
-		velocity = Vector2.ZERO
+	velocity = dir.normalized() * speed if dir.length() > 10.0 else Vector2.ZERO
 	move_and_slide()
+
+	if _contact_cooldown <= 0.0:
+		for i in get_slide_collision_count():
+			var body := get_slide_collision(i).get_collider()
+			if body and body.is_in_group("player") and body.has_method("take_hit"):
+				body.take_hit()
+				_contact_cooldown = 1.5
+				break
 
 func _pick_new_target() -> void:
 	var screen := get_viewport_rect().size
 	target_position = Vector2(
 		randf_range(80.0, screen.x - 80.0),
-		randf_range(80.0, screen.y * 0.35)
+		randf_range(80.0, screen.y * 0.38)
 	)
 
 func _shoot_pattern() -> void:
