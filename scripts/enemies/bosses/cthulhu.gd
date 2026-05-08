@@ -68,7 +68,7 @@ func _pick_target() -> void:
 	target_position = Vector2(randf_range(80.0, s.x - 80.0), randf_range(80.0, s.y * 0.38))
 
 func _shoot_body() -> void:
-	var count := [6, 10, 16][boss_phase - 1]
+	var count: int = ([6, 10, 16] as Array[int])[boss_phase - 1]
 	if boss_phase == 3:
 		shoot_timer.wait_time = 1.0
 	_spread_shot(count)
