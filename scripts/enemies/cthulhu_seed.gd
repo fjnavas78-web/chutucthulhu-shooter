@@ -45,7 +45,7 @@ func _pick_target() -> void:
 func _shoot_pattern() -> void:
 	if enemy_bullet_scene == null:
 		return
-	var count := [5, 8, 12][boss_phase - 1]
+	var count: int = ([5, 8, 12] as Array[int])[boss_phase - 1]
 	var step := TAU / count
 	for i in count:
 		var b := enemy_bullet_scene.instantiate()
