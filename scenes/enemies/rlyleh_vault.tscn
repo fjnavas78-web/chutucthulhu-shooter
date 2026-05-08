@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/rlyleh_vault.gd" id="1_vault"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/enemy_bullet.tscn" id="2_bullet"]
+
+[sub_resource type="RectangleShape2D" id="1_shape"]
+size = Vector2(36.0, 28.0)
+
+[node name="RlyehVault" type="CharacterBody2D"]
+script = ExtResource("1_vault")
+bullet_scene = ExtResource("2_bullet")
+
+[node name="Base" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-18, 14, 18, 14, 18, -4, -18, -4)
+color = Color(0.15, 0.12, 0.08, 1.0)
+
+[node name="Barrel" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-6, -4, 6, -4, 8, -20, -8, -20)
+color = Color(0.25, 0.20, 0.14, 1.0)
+
+[node name="Dome" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-14, -4, 14, -4, 18, 10, -18, 10)
+color = Color(0.08, 0.15, 0.10, 1.0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1_shape")

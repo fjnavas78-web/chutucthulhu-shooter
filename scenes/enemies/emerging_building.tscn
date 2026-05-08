@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/emerging_building.gd" id="1_bld"]
+
+[sub_resource type="RectangleShape2D" id="1_shape"]
+size = Vector2(22.0, 80.0)
+
+[node name="EmergingBuilding" type="CharacterBody2D"]
+script = ExtResource("1_bld")
+
+[node name="Tower" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-11, -40, 11, -40, 11, 40, -11, 40)
+color = Color(0.06, 0.10, 0.08, 1.0)
+
+[node name="Top" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, -52, 11, -40, -11, -40)
+color = Color(0.10, 0.18, 0.12, 1.0)
+
+[node name="Glow" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-5, -48, 5, -48, 4, -42, -4, -42)
+color = Color(0.0, 1.0, 0.4, 0.8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1_shape")
