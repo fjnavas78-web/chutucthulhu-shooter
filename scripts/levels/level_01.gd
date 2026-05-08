@@ -15,11 +15,11 @@ var _alive: int = 0
 const SCREEN_W := 480.0
 const SCREEN_H := 854.0
 
-const SPAWN_POINTS := [
-	Vector2(60, 30), Vector2(160, 30), Vector2(240, 30),
-	Vector2(320, 30), Vector2(420, 30),
-	Vector2(20, 180), Vector2(460, 180)
+const SPAWN_TOP := [
+	Vector2(50, 30), Vector2(130, 30), Vector2(210, 30),
+	Vector2(290, 30), Vector2(370, 30), Vector2(440, 30)
 ]
+const SPAWN_SIDES := [Vector2(20, 160), Vector2(460, 160)]
 
 func _ready() -> void:
 	GameManager.score = 0
@@ -31,75 +31,103 @@ func _ready() -> void:
 	_run_level()
 
 func _run_level() -> void:
-	await _wave(1, 6, [], [])
+	# Wave 1 — cultistas libres
+	await _wave(1, 6, 0, 0)
 	await get_tree().create_timer(3.0).timeout
-	await _wave(2, 6, [0, 1], [])
+
+	# Wave 2 — cultistas + 2 bóvedas
+	await _wave(2, 6, 2, 0)
 	await get_tree().create_timer(3.0).timeout
-	await _wave_3_seed()
+
+	# Wave 3 — más densidad: cultistas + 4 bóvedas + 1 edificio
+	await _wave(3, 6, 4, 1)
+	await get_tree().create_timer(3.0).timeout
+
+	# Wave 4 — SEMILLA DE CTHULHU (especial)
+	await _wave_seed()
 	await get_tree().create_timer(4.0).timeout
-	await _wave(4, 7, [0, 2], [1])
+
+	# Wave 5 — cultistas + 5 bóvedas + 3 edificios
+	await _wave(5, 7, 5, 3)
 	await get_tree().create_timer(3.0).timeout
-	await _wave(5, 8, [0, 1, 2], [0, 2])
+
+	# Wave 6 — formación círculo + 4 bóvedas + 2 edificios
+	await _wave_formation()
 	await get_tree().create_timer(3.0).timeout
-	await _wave_formation(6)
-	await get_tree().create_timer(3.0).timeout
-	await _wave(7, 10, [0, 1, 2, 3], [0, 1, 2])
+
+	# Wave 7 — todo a la vez
+	await _wave(7, 8, 6, 4)
 	await get_tree().create_timer(4.0).timeout
+
 	_spawn_cthulhu()
 
-# wave: N free cultists + vault_idxs (spawn point indices) + building_idxs
-func _wave(num: int, cultists: int, vault_idxs: Array, building_idxs: Array) -> void:
+# Generic wave: cultists + N vaults scattered + M buildings
+func _wave(num: int, cultists: int, vaults: int, buildings: int) -> void:
 	hud.show_wave(num, 7)
 	_alive = 0
-	for i in cultists:
-		_spawn_cultist(SPAWN_POINTS.pick_random())
-		await get_tree().create_timer(0.5).timeout
-	for idx in vault_idxs:
-		_spawn_vault(SPAWN_POINTS[idx % SPAWN_POINTS.size()])
-	for idx in building_idxs:
+	for _i in cultists:
+		_spawn_cultist(SPAWN_TOP.pick_random())
+		await get_tree().create_timer(0.45).timeout
+	for _i in vaults:
+		var pos := SPAWN_TOP.pick_random()
+		_spawn_vault(pos + Vector2(randf_range(-20, 20), 0))
+	for _i in buildings:
 		_spawn_building(randf_range(40.0, SCREEN_W - 40.0))
 	while _alive > 0:
 		await get_tree().create_timer(0.5).timeout
 
-func _wave_3_seed() -> void:
-	hud.show_wave(3, 7)
+func _wave_seed() -> void:
+	hud.show_wave(4, 7)
 	hud.show_boss_bar("SEMILLA DE CTHULHU")
 	_alive = 0
-	# 3 cultists first
-	for i in 3:
-		_spawn_cultist(SPAWN_POINTS.pick_random())
-		await get_tree().create_timer(0.6).timeout
-	# Then seed
-	var seed := seed_scene.instantiate()
-	seed.died.connect(_on_enemy_died)
-	seed.health_changed.connect(hud.update_boss_health)
-	boss_container.add_child(seed)
-	seed.global_position = Vector2(SCREEN_W / 2.0, 140.0)
+
+	# 2 cultistas + 2 bóvedas de escolta
+	for _i in 2:
+		_spawn_cultist(SPAWN_TOP.pick_random())
+		await get_tree().create_timer(0.5).timeout
+	_spawn_vault(Vector2(80.0, 40.0))
+	_spawn_vault(Vector2(400.0, 40.0))
+
+	# Semilla
+	var seed_node := seed_scene.instantiate()
+	# base_boss.died emite sin parámetros → lambda
+	seed_node.died.connect(func(): _on_enemy_died(500))
+	seed_node.health_changed.connect(hud.update_boss_health)
+	boss_container.add_child(seed_node)
+	seed_node.global_position = Vector2(SCREEN_W / 2.0, 140.0)
 	_alive += 1
+
 	while _alive > 0:
 		await get_tree().create_timer(0.5).timeout
-	boss_container.visible = true  # reset
-	# hide boss bar
-	hud.boss_bar.hide()
-	hud.boss_label.hide()
 
-func _wave_formation(num: int) -> void:
-	hud.show_wave(num, 7)
+	hud.hide_boss_bar()
+
+func _wave_formation() -> void:
+	hud.show_wave(6, 7)
 	_alive = 0
-	if cultist_formation_scene == null:
-		await _wave(num, 8, [0, 2], [1])
-		return
-	var formation := cultist_formation_scene.instantiate()
-	formation.cultist_scene = cultist_scene
-	formation.count = 8
-	formation.break_y = 280.0
-	formation.all_died.connect(func(): _alive -= 8)
-	add_child(formation)
-	formation.global_position = Vector2(SCREEN_W / 2.0, -60.0)
-	_alive += 8
-	# also 2 vaults
-	_spawn_vault(SPAWN_POINTS[0])
-	_spawn_vault(SPAWN_POINTS[4])
+
+	# Círculo de cultistas
+	if cultist_formation_scene != null:
+		var f := cultist_formation_scene.instantiate()
+		f.cultist_scene = cultist_scene
+		f.count = 8
+		f.break_y = 260.0
+		# Cuando la formación rompe y todos mueren, descuenta los 8 de _alive
+		f.all_died.connect(func(): _alive = max(0, _alive - 8))
+		add_child(f)
+		f.global_position = Vector2(SCREEN_W / 2.0, -60.0)
+		_alive += 8
+	else:
+		for _i in 8:
+			_spawn_cultist(SPAWN_TOP.pick_random())
+			await get_tree().create_timer(0.3).timeout
+
+	# 4 bóvedas + 2 edificios acompañando
+	for pos in [Vector2(60,30), Vector2(180,30), Vector2(300,30), Vector2(420,30)]:
+		_spawn_vault(pos)
+	_spawn_building(randf_range(60.0, 200.0))
+	_spawn_building(randf_range(280.0, 420.0))
+
 	while _alive > 0:
 		await get_tree().create_timer(0.5).timeout
 
@@ -131,9 +159,9 @@ func _spawn_building(x: float) -> void:
 	b.global_position = Vector2(x, SCREEN_H + 80.0)
 	_alive += 1
 
-func _on_enemy_died(_score: int) -> void:
+func _on_enemy_died(score: int) -> void:
 	_alive = max(0, _alive - 1)
-	GameManager.add_score(_score)
+	GameManager.add_score(score)
 
 func _spawn_cthulhu() -> void:
 	if cthulhu_scene == null:

@@ -79,6 +79,10 @@ func set_arm_status(side: String, active: bool) -> void:
 	bar.modulate = Color.WHITE if active else Color(0.4, 0.4, 0.4)
 	lbl.text = ("BRAZO IZQ" if side == "left" else "BRAZO DER") if active else "REGENER..."
 
+func hide_boss_bar() -> void:
+	boss_bar.hide()
+	boss_label.hide()
+
 func show_game_over() -> void:
 	game_over_panel.show()
 
